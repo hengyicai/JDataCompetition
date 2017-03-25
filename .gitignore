@@ -9,6 +9,9 @@ __pycache__/
 # impl
 .idea
 
+#conf
+conf.py
+
 # Distribution / packaging
 
 # Translations
