@@ -75,4 +75,4 @@ if __name__ == '__main__':
 
     # test redis connection
     redis_cli = redis.Redis(host='10.30.6.33', db=0, port=6379)
-    print(redis_cli.info(section='all'))
+    print(redis_cli.info(section='keyspace'))
