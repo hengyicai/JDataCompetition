@@ -1,5 +1,5 @@
 # coding=utf-8
-import conf
+import Src.conf
 import pandas as pd
 
 '''
@@ -17,7 +17,7 @@ with open(file_p,'r') as m_f:
             row = line.split(',')
 '''
 
-df = pd.read_csv(conf.action2_p)
+df = pd.read_csv(Src.conf.action2_p)
 print df.describe
 
 def fetch_user_actions(user_id, start_time, end_time ):
