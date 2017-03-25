@@ -1,10 +1,12 @@
 # coding=utf-8
-import Src.conf
 import pandas as pd
+import numpy as np
+from datetime import datetime
+from Src.utils import config_util
+import os.path
+
 
 '''
-file_p = '/Users/yaoguangzhong/比赛/京东/data/JData_Action_201602.csv'
-
 with open(file_p,'r') as m_f:
     line = m_f.readline()
     line = m_f.readline()
@@ -17,9 +19,13 @@ with open(file_p,'r') as m_f:
             row = line.split(',')
 '''
 
-df = pd.read_csv(Src.conf.action2_p)
-print df.describe
+'''
+df['time'] = df['time'].astype(np.datetime64)
+for x in  df['time'] :
+    print x.year
+'''
 
+#pd.to_datetime(df)
 def fetch_user_actions(user_id, start_time, end_time ):
     """Fetches rows from action log.
 
@@ -27,25 +33,75 @@ def fetch_user_actions(user_id, start_time, end_time ):
 
 
     Args:
-        user_id(int): user_id.
-        keys: A sequence of strings representing the key of each table row
-            to fetch.
-        other_silly_variable: Another optional variable, that has a much
-            longer name than the other args, and which does nothing.
+        user_id: int; user_id.
+        start_time: date; the statistic start date
+        end_time: date; the statistic end date
 
     Returns:
-        A dict mapping keys to the corresponding table row data
-        fetched. Each row is represented as a tuple of strings. For
-        example:
+        A list contains the corresponding records.
+        Each row is represented as a tuple of ints, represents the num of
+        module clicked, the number of skimming, the # of add to cart, the # of remove from cart,
+        the # of placing an order, the # of favourite and the # of click pertaining to the
+         specific product_id.
+        For example:
 
-        {'Serak': ('Rigel VII', 'Preparer'),
-         'Zim': ('Irk', 'Invader'),
-         'Lrrr': ('Omicron Persei 8', 'Emperor')}
+        [('product_id','#mod', '#skim','#add_card','#rm_card','#buy','#favor','#click')]
 
-        If a key from the keys argument is missing from the dictionary,
-        then that row was not found in the table.
-
-    Raises:
-        IOError: An error occurred accessing the bigtable.Table object.
     """
-    pass
+    #end_time : <String> '2005-02-25'
+    #<type 'datetime.date'>
+    #todo uniform the date format
+    end = np.datetime64(end_time).astype(object)
+    #filter as day
+    end_day = end.day
+    end_month = end.month
+    start_day = np.datetime64(end_time).astype(object).day
+    start_month = np.datetime64(end_time).astype(object).month
+    print 'the start month is ' + str(start_month) + ' and end month is ' + str(end_month)
+    if start_month == 2 & end_month == 2:
+        df = pd.read_csv(config_util.get(section='Path',key='Action02'))
+    elif start_month == 2 & end_month == 3:
+        df2 = pd.read_csv(config_util.get(section='Path',key='Action02'))
+        df3 = pd.read_csv(config_util.get(section='Path',key='Action03'))
+        df = pd.concat([df2,df3])
+    elif start_month == 2 & end_month ==4:
+        df2 = pd.read_csv(config_util.get(section='Path',key='Action02'))
+        df3 = pd.read_csv(config_util.get(section='Path',key='Action03'))
+        df4 = pd.read_csv(config_util.get(section='Path',key='Action04'))
+        df = pd.concat([df2,df3,df4])
+    elif start_month == 3 & end_month ==3:
+        df = pd.read_csv(config_util.get(section='Path',key='Action03'))
+    elif start_month == 3 & end_month == 4:
+        df3 = pd.read_csv(config_util.get(section='Path',key='Action03'))
+        df4 = pd.read_csv(config_util.get(section='Path',key='Action04'))
+        df = pd.concat([df3,df4])
+    elif start_month == 4 & end_month ==4:
+        df = pd.read_csv(config_util.get(section='Path',key='Action04'))
+
+    df['time'] = df['time'].astype(np.datetime64)
+    print df.describe
+    #df = df.sort(['time'], ascending=1)
+    #if has multi condition, then the () is needed.
+    df = df[(df['time'] > start_time) & (df['time'] < end_time)]
+    print df.describe
+
+    grouped = df.groupby(['user_id', 'sku_id'])
+    #can't use user_id directly again after group by
+
+    for (key1,key2),group in grouped:
+        print key1
+        print key2
+        for element in group[group['user_id'] == user_id]:
+            print element
+
+
+
+
+fetch_user_actions(27630, '2016-02-01', '2016-02-25' )
+
+
+
+
+
+
+
