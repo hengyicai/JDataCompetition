@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import copy
 from Src.utils import redis_util
-import extract_helper
+import extract_single
 
 brand_data_path = '../../Res/brand_action.txt'
 brand_data_file = open(brand_data_path, 'a')
@@ -29,10 +29,10 @@ def extract_brand_from_redis():
         len_day = redis_cli.llen(day)
         for i in xrange(len_day):
             line = redis_cli.lindex(day, i).strip()
-            brand_id = extract_helper.get_brand(line)
-            click_type = int(extract_helper.get_type(line))
-            sku_id = extract_helper.get_skuid(line)
-            user_id = extract_helper.get_userid(line)
+            brand_id = extract_single.get_brand(line)
+            click_type = int(extract_single.get_type(line))
+            sku_id = extract_single.get_skuid(line)
+            user_id = extract_single.get_userid(line)
             if brand_id not in brand_dict:
                 brand_dict[brand_id] = copy.deepcopy(brand_list)
 
