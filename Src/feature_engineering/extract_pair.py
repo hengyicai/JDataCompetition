@@ -104,7 +104,7 @@ def extract_pair_from_redis(attr_index, pair_index, file_path):
 
 
 def main():
-    pass
+    extract_pair_from_redis([1], [0,6], '../../Res/test_pair.csv')
 
 
 if __name__ == '__main__':
