@@ -1,6 +1,6 @@
 # coding=utf-8
 from __future__ import print_function
-from Src.utils import redis_util
+from utils import redis_util
 import copy
 import extract_single
 
@@ -104,7 +104,24 @@ def extract_pair_from_redis(attr_index, pair_index, file_path):
 
 
 def main():
-    extract_pair_from_redis([1], [0, 6], '../../Res/test_pair.csv')
+    res_path = '../../Res/'
+    pair_files = [
+        "user_sku_action_day.csv",
+        "user_brand_action_day.csv",
+        "user_cate_action_day.csv",
+        "brand_sku_action_day.csv",
+        "cate_sku_action_day.csv"
+        ]
+    pair_names = [res_path + item for item in pair_files]
+    paras_dict = {
+        0: (0,1),
+        1: (0,6,1,5),
+        2: (0,5,1,6),
+        3: (6,1,0),
+        4: (5,1,0)
+        }
+    current_run_index = 4 
+    extract_pair_from_redis(paras_dict[current_run_index][2:],paras_dict[current_run_index][0:2], pair_names[current_run_index])
 
 if __name__ == '__main__':
     main()

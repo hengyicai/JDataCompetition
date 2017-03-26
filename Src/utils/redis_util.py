@@ -2,7 +2,7 @@
 """Redis helper"""
 
 import redis
-from Src.utils import config_util
+from utils import config_util
 
 HOST = config_util.get('Redis', 'Host')
 Port = config_util.get('Redis', 'Port')

@@ -1,7 +1,7 @@
 # coding=utf-8
 """Helper function used in profile extraction"""
 from __future__ import print_function
-from Src.utils import redis_util
+from utils import redis_util
 import copy
 
 
