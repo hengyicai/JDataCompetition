@@ -3,11 +3,30 @@
 from __future__ import print_function
 
 import copy
-from Src.utils import redis_util
-import extract_helper
+import redis
 
 brand_data_path = '../../Res/brand_action.txt'
 brand_data_file = open(brand_data_path, 'a')
+
+
+def __get_date(line):
+    return line.split(',')[2].split(' ')[0]
+
+
+def __get_brand(line):
+    return line.split(',')[-1]
+
+
+def __get_type(line):
+    return line.split(',')[-3]
+
+
+def __get_skuid(line):
+    return line.split(',')[1]
+
+
+def __get_userid(line):
+    return line.split(',')[0]
 
 
 def extract_brand_from_redis():
@@ -16,7 +35,7 @@ def extract_brand_from_redis():
         'user': set(),
         'sku': set()
     }
-    redis_cli = redis_util.get_basic_db()
+    redis_cli = redis.Redis(host='10.30.6.33', db=0, port=6379)
     for day in redis_cli.scan_iter():
         brand_list = [copy.deepcopy(m_dict),
                       copy.deepcopy(m_dict),
@@ -29,10 +48,10 @@ def extract_brand_from_redis():
         len_day = redis_cli.llen(day)
         for i in xrange(len_day):
             line = redis_cli.lindex(day, i).strip()
-            brand_id = extract_helper.get_brand(line)
-            click_type = int(extract_helper.get_type(line))
-            sku_id = extract_helper.get_skuid(line)
-            user_id = extract_helper.get_userid(line)
+            brand_id = __get_brand(line)
+            click_type = int(__get_type(line))
+            sku_id = __get_skuid(line)
+            user_id = __get_userid(line)
             if brand_id not in brand_dict:
                 brand_dict[brand_id] = copy.deepcopy(brand_list)
 

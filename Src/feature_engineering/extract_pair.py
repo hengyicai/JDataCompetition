@@ -50,8 +50,8 @@ def extract_pair_from_redis(attr_index, pair_index, file_path):
     m_dict = {
         'count': 0
     }
-    for attr_i in attr_index:
-        m_dict[COLUMN[attr_i]] = set()
+    for attr_i in range(len(attr_index)):
+        m_dict[COLUMN[attr_index[attr_i]]] = set()
 
     redis_cli_pair = redis_util.get_pair_db()
     match_pattern = '*:' + REDIS_COLUMN[pair_index[0]] + '_' + REDIS_COLUMN[pair_index[1]] + ':*'
@@ -71,15 +71,15 @@ def extract_pair_from_redis(attr_index, pair_index, file_path):
         for i in xrange(len_record):
             line = redis_cli_pair.lindex(record_key, i).strip()
             keys = []
-            for key_i in pair_index:
-                keys.append(extract_single.call_tbl[key_i](line))
+            for key_i in range(len(pair_index)):
+                keys.append(extract_single.call_tbl[COLUMN[pair_index[key_i]]](line))
 
             click_type = int(extract_single.get_type(line))
 
             attr_values = []
 
-            for attr_i in attr_index:
-                attr_values.append(extract_single.call_tbl[COLUMN[attr_i]](line))
+            for attr_i in range(len(attr_index)):
+                attr_values.append(extract_single.call_tbl[COLUMN[attr_index[attr_i]]](line))
 
             joint_key = "#".join(keys)
             if joint_key not in res_dict:
@@ -87,15 +87,15 @@ def extract_pair_from_redis(attr_index, pair_index, file_path):
 
             res_dict[joint_key][click_type - 1]['count'] += 1
 
-            for j in attr_index:
-                res_dict[joint_key][click_type - 1][COLUMN[j]].add(attr_values[j])
+            for j in range(len(attr_index)):
+                res_dict[joint_key][click_type - 1][COLUMN[attr_index[j]]].add(attr_values[j])
 
         for m_joint_key, value in res_dict.iteritems():
             line = m_joint_key.split('#') + [record_key.split(':')[0]]
             for m_type in value:
                 line.append(m_type['count'])
-                for i in attr_index:
-                    line.append(len(m_type[COLUMN[i]]))
+                for i in range(len(attr_index)):
+                    line.append(len(m_type[COLUMN[attr_index[i]]]))
 
             write_line = ','.join([str(item) for item in line])
             print(write_line, file=file_obj)
@@ -104,8 +104,7 @@ def extract_pair_from_redis(attr_index, pair_index, file_path):
 
 
 def main():
-    extract_pair_from_redis([1], [0,6], '../../Res/test_pair.csv')
-
+    extract_pair_from_redis([1], [0, 6], '../../Res/test_pair.csv')
 
 if __name__ == '__main__':
     main()
