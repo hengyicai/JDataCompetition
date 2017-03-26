@@ -8,6 +8,7 @@ import redis
 user_data_path = '../../Res/user_action.txt'
 user_data_file = open(user_data_path, 'a')
 
+
 def __get_date(line):
     return line.split(',')[2].split(' ')[0]
 
@@ -27,8 +28,10 @@ def __get_skuid(line):
 def __get_userid(line):
     return line.split(',')[0]
 
+
 def __get_cate(line):
     return line.split(',')[-2]
+
 
 def extract_user_from_redis():
     m_dict = {
@@ -41,18 +44,17 @@ def extract_user_from_redis():
     for day in redis_cli.scan_iter():
 
         user_list = [copy.deepcopy(m_dict),
-                      copy.deepcopy(m_dict),
-                      copy.deepcopy(m_dict),
-                      copy.deepcopy(m_dict),
-                      copy.deepcopy(m_dict),
-                      copy.deepcopy(m_dict)]
+                     copy.deepcopy(m_dict),
+                     copy.deepcopy(m_dict),
+                     copy.deepcopy(m_dict),
+                     copy.deepcopy(m_dict),
+                     copy.deepcopy(m_dict)]
         user_dict = {}
         # {'user_id' : user_list, 'user_id' : user_list}
         len_day = redis_cli.llen(day)
         for i in xrange(len_day):
             line = redis_cli.lindex(day, i).strip()
             user_id = __get_userid(line)
-
 
             click_type = int(__get_type(line))
             sku_id = __get_skuid(line)
@@ -78,6 +80,7 @@ def extract_user_from_redis():
 
             print(write_line, file=user_data_file)
     user_data_file.close()
+
 
 if __name__ == '__main__':
     # uncomment this to build the profile

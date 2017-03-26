@@ -1,7 +1,6 @@
 # JetBrains
 /.idea/
 /Data/
-config.ini
 .DS_Store
 Src/__init__.pyc
 Src/utils/__init__.pyc
