@@ -1,7 +1,8 @@
 # coding=utf-8
+"""将 user 的 action 信息入库，每一个 user 对应一个 document"""
 from __future__ import print_function
 import sys
-import mongo_writer
+import mongo_helper
 
 current_user = None
 user = None
@@ -9,7 +10,7 @@ user_list = []
 type_arr = ['skim', 'add_cart', 'del_cart', 'order', 'attention', 'click']
 
 # config mongodb
-coll = mongo_writer.get_coll('users_action', 'JData')
+coll = mongo_helper.get_coll('users_action', 'JData')
 
 
 def process_user_day(user_day_list):
@@ -82,7 +83,7 @@ for out_line in sys.stdin:
             # process previous user
             user_dict = process_user(user_list)
             # write this user to mongodb
-            mongo_writer.write_mongo(user_dict, coll)
+            mongo_helper.write_mongo(user_dict, coll)
             user_list = []
         current_user = user
         user_list.append(out_line)
@@ -90,6 +91,6 @@ for out_line in sys.stdin:
 if current_user:
     # process last user 
     user_dict = process_user(user_list)
-    mongo_writer.write_mongo(user_dict, coll)
+    mongo_helper.write_mongo(user_dict, coll)
 
-mongo_writer.close_mongo()
+mongo_helper.close_mongo()
